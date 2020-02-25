@@ -30,7 +30,7 @@ $config->RockDatetime = [
 
 // use global options
 $d = new RockDatetime();
-d($d->format()); // Day 25.02.2020 @ Time 20:02
+d($d->format()); // Day 25.02.2020 @ Time 20:06
 
 // set options on construct of object
 // date formatting from global config will stay intact
@@ -40,7 +40,7 @@ d($d->format()); // Day 25.02.2020 @ Time 20*06*04 - WOHOO!
 // set options inline in format() call
 // time is taken from config (not from the previous example!)
 $d = new RockDatetime();
-d($d->format(['date' => '%Y/%m/%d'])); // Day 2020/02/25 @ Time 20:07
+d($d->format(['date' => '%Y/%m/%d'])); // Day 2020/02/25 @ Time 20:06
 ```
 
 ## API methods
