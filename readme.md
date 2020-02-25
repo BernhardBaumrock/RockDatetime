@@ -170,3 +170,51 @@ echo $d->firstOfMonth("+9 days");         // 2020-02-10 00:00:00
 echo $d->firstOfMonth("+1 year"); // 2021-02-01 00:00:00
 echo $d->lastOfMonth("+1 year");  // 2021-02-29 23:59:59
 ```
+
+## Time comparisons
+
+* equal, ==
+* before, <
+* after, >
+
+```php
+$d1 = new RockDatetime("2020-01-01");
+$d2 = new RockDatetime("2010-01-01");
+
+d($d1->equal("2020-01-01")); // true
+d($d1->equal("2020-01-01 12:00")); // false
+d($d1 == $d2); // false
+
+d($d1->before("2020-02-02")); // true
+d($d1->before($d2)); // false
+d($d1 < $d2); // false
+
+d($d1->after("2020-02-02")); // false
+d($d1->after($d2)); // true
+d($d1 > $d2); // true
+```
+
+## Checking for date ranges
+
+```php
+$d = new RockDatetime("2020-06-01");
+$from = $d->firstOfMonth();
+$to = $d->lastOfMonth();
+d($d->between($from, $to)); // false, comparing from < current < to
+d($d->within($from, $to)); // true, comparing from <= current <= to
+```
+
+```php
+$d = new RockDatetime("2020-06-01");
+
+$day = new RockDatetime("2020-06-20");
+d($d->onDay($day)); // false
+d($d->inMonth($day)); // true
+d($d->inYear($day)); // true
+
+d($d->onDay("2020-06-02")); // false
+d($d->inMonth("2020-06")); // true
+d($d->inYear("2020")); // true
+```
+
+The `inYear()` method is somewhat special as it transforms 4-letter input into a string like `"$year-01-01"` to make sure that PHP's `strtotime()` recognizes it correctly. See https://bit.ly/37XP7Wo for the issue.

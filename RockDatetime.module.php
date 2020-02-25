@@ -84,7 +84,7 @@ class RockDatetime extends WireData implements Module {
    * instance of RockDatetime. Instead they return strings, integers or new
    * RockDatetime instances.
    */
-
+  
   /**
    * Create a copy of current RockDatetime instance
    * @param string|array $data
@@ -148,7 +148,29 @@ class RockDatetime extends WireData implements Module {
       $options->datetime);
     return strftime($format, $this->int);
   }
-  
+
+  /**
+   * Return merged options (defaults, config, custom)
+   * @return object
+   */
+  public function getOptions($options = []) {
+    if(!is_array($options)) throw new WireException("Parameter of getOptions must be an array");
+    
+    // if options have not been set yet we set them now
+    if(!$this->options) {
+      $defaults = [
+        'date' => "%d.%m.%Y",
+        'time' => "%H:%M",
+        'datetime' => "{date} {time}",
+      ];
+      $config = $this->config->RockDatetime ?: [];
+      $this->options = (object)array_merge($defaults, $config, $options);
+    }
+
+    // return merged options
+    return (object)array_merge((array)$this->options, $options);
+  }
+
   /**
    * Is data a valid timestamp?
    * @return bool
@@ -189,23 +211,25 @@ class RockDatetime extends WireData implements Module {
 
   /**
    * Parse given data to an integer timestamp
-   * @param string|int $data
+   * 
+   * Use caution with 4-digit strings or integers as they are interpreted as
+   * hour and minute of current time:
+   * new RockDatetime("2020") --> 2020-02-25 20:20:00
+   * 
+   * @param string|int|RockDatetime $data
    * @param int $time
    * @return int|false
    */
   public function parse($data, $time = null) {
-    // if data is an integer we return it as timestamp
     if(is_numeric($data)) return (int)$data;
 
-    // if it is a string we try strtotime
-    if(is_string($data)) {
-      $stamp = $time
-        ? strtotime($data, $time)
-        : strtotime($data);
-      if($stamp) return $stamp;
-    }
+    // we typecast $data to a string so a RockDaterange object can be parsed
+    $data = (string)$data;
 
-    throw new WireException("Unable to parse $data to timestamp");
+    // parse the input
+    $stamp = $time ? strtotime($data, $time) : strtotime($data);
+    if(!$stamp) throw new WireException("Unable to parse $data to timestamp");
+    return $stamp;
   }
 
   /**
@@ -216,29 +240,92 @@ class RockDatetime extends WireData implements Module {
     return date($format, $this->int);
   }
 
+  /* #################### END HELPERS #################### */
+
+  /* #################### COMPARISONS #################### */
+
   /**
-   * Return merged options (defaults, config, custom)
-   * @return object
-   */
-  public function getOptions($options = []) {
-    if(!is_array($options)) throw new WireException("Parameter of getOptions must be an array");
-    
-    // if options have not been set yet we set them now
-    if(!$this->options) {
-      $defaults = [
-        'date' => "%d.%m.%Y",
-        'time' => "%H:%M",
-        'datetime' => "{date} {time}",
-      ];
-      $config = $this->config->RockDatetime ?: [];
-      $this->options = (object)array_merge($defaults, $config, $options);
+     * Is the current instance after a given datetime?
+     * @return bool
+     */
+    public function after($date) {
+      return $this > new RockDatetime($date);
     }
 
-    // return merged options
-    return (object)array_merge((array)$this->options, $options);
-  }
+    /**
+     * Is the current instance before a given datetime?
+     * @return bool
+     */
+    public function before($date) {
+      return $this < new RockDatetime($date);
+    }
 
-  /* #################### END HELPERS #################### */
+    /**
+     * Is the current instance equal to given datetime?
+     * @return bool
+     */
+    public function equal($date) {
+      return $this == new RockDatetime($date);
+    }
+
+  /* #################### END COMPARISONS #################### */
+
+  /* #################### DATERANGE CHECKS #################### */
+
+    /**
+     * Is the current instance between two dates?
+     * Similar to within() but returns from < current < to
+     * @return bool
+     */
+    public function between($from, $to) {
+      $from = new RockDatetime($from);
+      $to = new RockDatetime($to);
+      return $from < $this AND $this < $to;
+    }
+
+    /**
+     * Check if current instance is in given month
+     * @return bool
+     */
+    public function inMonth($month) {
+      $m = new RockDatetime($month);
+      return $this->within($m->firstOfMonth(), $m->lastOfMonth());
+    }
+
+    /**
+     * Check if current instance is in given year
+     * @return bool
+     */
+    public function inYear($year) {
+      // if a 4-letter string was provided we convert it to a timestamp
+      // see https://bit.ly/37XP7Wo
+      $year = (string)$year;
+      if(strlen($year) === 4) $year = "$year-01-01";
+      $y = new RockDatetime($year);
+      return $this->within($y->firstOfYear(), $y->lastOfYear());
+    }
+
+    /**
+     * Check if instance is on given day
+     * @return bool
+     */
+    public function onDay($day) {
+      $d = new RockDatetime($day);
+      return $this->within($d->firstOfDay(), $d->lastOfDay());
+    }
+
+    /**
+     * Inclusive date range check.
+     * Similar to between but compares from <= current <= to
+     * @return bool
+     */
+    public function within($from, $to) {
+      $from = new RockDatetime($from);
+      $to = new RockDatetime($to);
+      return $from <= $this AND $this <= $to;
+    }
+
+  /* #################### END DATERANGE CHECKS #################### */
 
   /**
    * Return string presentation of this object
