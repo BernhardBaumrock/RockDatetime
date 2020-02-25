@@ -1,17 +1,14 @@
 # RockDatetime
 
-This module provides handy methods when working with dates and times in PHP and ProcessWire. Examples in this readme use TracyDebuggers console and dumping features using shorthand `d()` syntax. If you don't know TracyDebugger it's time to grab a copy and marvel.
+This module provides handy methods when working with dates and times in PHP and ProcessWire. Some examples in this readme use TracyDebuggers console and dumping features using shorthand `d()` syntax. If you don't know TracyDebugger it's time to grab a copy and marvel.
 
 ## Usage
 
 ```php
 $format = "%A, %d.%m.%Y %H:%M Uhr";
 $time = new RockDatetime("2020-02-25 13:00");
-echo $time->format($format);
-// Dienstag, 25.02.2020 12:55 Uhr
-
-echo $time->firstOfMonth()->format($format);
-// Samstag, 01.02.2020 00:00 Uhr
+echo $time->format($format); // Dienstag, 25.02.2020 12:55 Uhr
+echo $time->firstOfMonth()->format($format); // Samstag, 01.02.2020 00:00 Uhr
 ```
 
 ## Defining global options
@@ -31,7 +28,7 @@ $d = new RockDatetime("2020-02-22 12:30", ['time' => "%H:%M Uhr"]);
 d($d, 'custom');
 ```
 
-![img](https://i.imgur.com/1DsHkRA.png)
+![img](https://i.imgur.com/MhB1VO8.png)
 
 ## API methods
 
@@ -123,8 +120,8 @@ echo $d; // 2020-02-25 14:50:29
 
 $from = new RockDatetime("2020-02");
 $to = new RockDatetime("2020-03");
-echo $pages->find("template=basic-page,created>=$from,created<$to");
-// 1033|1034|1035
+$selector = "template=basic-page,created>=$from,created<$to";
+echo $pages->find($selector); // 1033|1034|1035
 ```
 
 **Locale-aware formatting of the object**
