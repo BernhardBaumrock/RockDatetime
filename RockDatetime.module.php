@@ -30,8 +30,14 @@ class RockDatetime extends WireData implements Module {
 
   /**
    * Class constructor
+   * @param mixed @data
+   * @param array options
    */
   public function __construct($data = null, $options = []) {
+    if(is_array($data)) {
+      $options = $data;
+      $data = time();
+    }
     $this->setTime($data ?? time());
     $this->setOptions($options);
   }
