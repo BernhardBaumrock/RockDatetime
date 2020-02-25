@@ -11,24 +11,37 @@ echo $time->format($format); // Dienstag, 25.02.2020 12:55 Uhr
 echo $time->firstOfMonth()->format($format); // Samstag, 01.02.2020 00:00 Uhr
 ```
 
-## Defining global options
+## Concept
+
+A RockDatetime object holds not only the timestamp but also information for displaying a formatted string of the time and does also have several handy methods that help you when finding the very first second of a month, comparing dates or transforming strings into timestamps.
+
+## Defining options
+
+Working with dates and times you'll likely want to format them equally across your website most of the time. That's why RockDatetime takes options defined in `config.php` but leaving you the freedom of overriding them whenever necessary:
 
 ```php
 // site/config.php
+// If you don't define options the defaults will be taken
 $config->RockDatetime = [
   'date' => "%d.%m.%Y",
   'time' => "%H:%M",
-  'datetime' => "{date} {time}",
+  'datetime' => "Day {date} @ Time {time}",
 ];
 
-// example
-d(new RockDatetime(), 'default');
-$config->RockDatetime = ['date' => "%Y--%m--%d"];
-$d = new RockDatetime("2020-02-22 12:30", ['time' => "%H:%M Uhr"]);
-d($d, 'custom');
-```
+// use global options
+$d = new RockDatetime();
+d($d->format()); // Day 25.02.2020 @ Time 20:02
 
-![img](https://i.imgur.com/MhB1VO8.png)
+// set options on construct of object
+// date formatting from global config will stay intact
+$d = new RockDatetime(['time' => '%H*%M*%S - WOHOO!']);
+d($d->format()); // Day 25.02.2020 @ Time 20*06*04 - WOHOO!
+
+// set options inline in format() call
+// time is taken from config (not from the previous example!)
+$d = new RockDatetime();
+d($d->format(['date' => '%Y/%m/%d'])); // Day 2020/02/25 @ Time 20:07
+```
 
 ## API methods
 
