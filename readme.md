@@ -14,6 +14,69 @@ echo $time->firstOfMonth()->format($format);
 // Samstag, 01.02.2020 00:00 Uhr
 ```
 
+## Defining global options
+
+```php
+// site/config.php
+$config->RockDatetime = [
+  'date' => "%d.%m.%Y",
+  'time' => "%H:%M",
+  'datetime' => "{date} {time}",
+];
+
+// example
+d(new RockDatetime(), 'default');
+$config->RockDatetime = ['date' => "%Y--%m--%d"];
+$d = new RockDatetime("2020-02-22 12:30", ['time' => "%H:%M Uhr"]);
+d($d, 'custom');
+```
+
+![img](https://i.imgur.com/1DsHkRA.png)
+
+## API methods
+
+API methods always return the current RockDatetime instance. This means that all API method calls can be chained with further method colls, eg `$date->setTime("2020-02-25 13:00")->format("%A, %d.%m");`.
+
+### move()
+
+Moving by integer value (seconds):
+
+```php
+$d = new RockDatetime();
+echo $d; // 2020-02-25 15:58:25
+echo $d->move(60*60*24); // 2020-02-26 15:58:25
+echo $d; // 2020-02-26 15:58:25 --> also moved!
+```
+
+Moving by string (php relative date format):
+
+```php
+$d = new RockDatetime();
+echo $d; // 2020-02-25 15:58:25
+echo $d->move("+1 day"); // 2020-02-26 15:58:25
+echo $d; // 2020-02-26 15:58:25 --> also moved!
+```
+
+### setTime()
+
+Set the timestamp of the current RockDatetime object. See also the `parse()` method.
+
+```php
+$d = new RockDatetime();
+echo $d; // 2020-02-25 16:22:13
+echo $d->setTime("2020-01-01"); // 2020-01-01 00:00:00
+echo $d; // 2020-01-01 00:00:00
+```
+
+### setOptions()
+
+```php
+$d = new RockDatetime();
+echo $d->format(); // 25.02.2020 16:31
+$d->setOptions(['time' => "%H:%M Uhr"]);
+echo $d; // 25.02.2020 16:31 Uhr
+```
+
 ## Input
 
 RockDatetime has a `parse()` method that parses any string to an integer timestamp.
@@ -26,12 +89,14 @@ echo $d->parse("2.2.2020 22:22"); // 1580678520
 echo $d->parse("FOOBAR"); // WireException: Unable to parse FOOBAR to timestamp
 ```
 
-The `parse()` method parses the input and returns the integer value but it does not update the timestamp of the Datetime object! This is done via `setTime()`, which uses `parse()` under the hood:
+The `parse()` method parses the input and returns the integer value but it does not update the timestamp of the Datetime object! If you want to set a new time use `setTime()` instead, which uses `parse()` under the hood.
+
+If you pass a date directly to the class constructor the date will be set automatically according to the parsed value:
 
 ```php
-
+$d = new RockDatetime("2020-02-25 14:00");
+echo $d; // 2020-02-25 14:00
 ```
-
 
 ## Output
 
@@ -71,21 +136,40 @@ echo $d->format("%A, %d.%m.%y (%H:%M Uhr)"); // Dienstag, 25.02.20 (14:33 Uhr)
 echo $d->format(['time' => "%H|%M|%S"]); // 25.02.2020 14|40|45
 ```
 
-## Defining global options
+## Helper functions
+
+### Get first and last seconds of a day/month/year
+
+When working with dates you often need a very specific point in time, like the first day of the month. PHP comes with relative time formats like `strtotime("first day of this month")`, but the result is often not what I need for my development. That's why I built some custom helper methods that make life a little easier: 
 
 ```php
-// site/config.php
-$config->RockDatetime = [
-  'date' => "%d.%m.%Y",
-  'time' => "%H:%M",
-  'datetime' => "{date} {time}",
-];
-
-// example
-d(new RockDatetime(), 'default');
-$config->RockDatetime = ['date' => "%Y--%m--%d"];
-$d = new RockDatetime("2020-02-22 12:30", ['time' => "%H:%M Uhr"]);
-d($d, 'custom');
+// regular PHP relative date handling
+$d = new RockDatetime("first day of this month");
+echo $d; // 2020-02-01 15:35:43
 ```
 
-![img](https://i.imgur.com/1DsHkRA.png)
+Notice that the timestamp uses the current time and does not return the first second of this month. This might be exactly what you want, but most of the time I need the very first or very last second, so here's my solution:
+
+```php
+$d = new RockDatetime();
+
+echo $d->firstOfDay();   // 2020-02-25 00:00:00
+echo $d->lastOfDay();    // 2020-02-25 23:59:59
+
+echo $d->firstOfMonth(); // 2020-02-01 00:00:00
+echo $d->lastOfMonth();  // 2020-02-29 23:59:59
+
+echo $d->firstOfYear();  // 2020-01-01 00:00:00
+echo $d->lastOfYear();   // 2020-12-31 23:59:59
+```
+
+These methods can be combined with the `move()` API method. When a parameter is present it will automatically call the `move()` method for you:
+
+```php
+$d = new RockDatetime();
+echo $d->firstOfMonth()->move("+9 days"); // 2020-02-10 00:00:00
+echo $d->firstOfMonth("+9 days");         // 2020-02-10 00:00:00
+
+echo $d->firstOfMonth("+1 year"); // 2021-02-01 00:00:00
+echo $d->lastOfMonth("+1 year");  // 2021-02-29 23:59:59
+```
