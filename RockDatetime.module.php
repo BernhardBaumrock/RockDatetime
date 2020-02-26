@@ -104,6 +104,16 @@ class RockDatetime extends WireData implements Module {
   }
 
   /**
+   * Return duration between current and given time
+   * The returned integer is always positive
+   * @return int
+   */
+  public function duration($ref) {
+    $date = new RockDatetime($ref);
+    return abs($this->int - $date->int);
+  }
+
+  /**
    * Return first second of current Day
    * This method returns a new RockDatetime object
    * @return RockDatetime
