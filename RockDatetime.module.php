@@ -122,6 +122,26 @@ class RockDatetime extends WireData implements Module {
     }
 
     /**
+     * Return first second of current Hour
+     * This method returns a new RockDatetime object
+     * @return RockDatetime
+     */
+    public function firstOfHour($move = null) {
+      $new = new RockDatetime(strtotime(date("Y-m-d H:0:0", $this->int)));
+      return $new->move($move);
+    }
+
+    /**
+     * Return first second of current Minute
+     * This method returns a new RockDatetime object
+     * @return RockDatetime
+     */
+    public function firstOfMinute($move = null) {
+      $new = new RockDatetime(strtotime(date("Y-m-d H:i:0", $this->int)));
+      return $new->move($move);
+    }
+
+    /**
      * Return first second of current Month
      * This method returns a new RockDatetime object
      * @return RockDatetime
@@ -207,6 +227,26 @@ class RockDatetime extends WireData implements Module {
     }
 
     /**
+     * Return last second of current Hour
+     * This method returns a new RockDatetime object
+     * @return RockDatetime
+     */
+    public function lastOfHour($move = null) {
+      $new = $this->firstOfHour()->move('+1 Hour')->move(-1);
+      return $new->move($move);
+    }
+
+    /**
+     * Return last second of current Minute
+     * This method returns a new RockDatetime object
+     * @return RockDatetime
+     */
+    public function lastOfMinute($move = null) {
+      $new = $this->firstOfMinute()->move('+1 Minute')->move(-1);
+      return $new->move($move);
+    }
+
+    /**
      * Return last second of current Month
      * This method returns a new RockDatetime object
      * @return RockDatetime
@@ -245,7 +285,7 @@ class RockDatetime extends WireData implements Module {
 
       // parse the input
       $stamp = $time ? strtotime($data, $time) : strtotime($data);
-      if(!$stamp) throw new WireException("Unable to parse $data to timestamp");
+      if(!$stamp) throw new WireException("Unable to parse '$data' to timestamp");
       return $stamp;
     }
 
