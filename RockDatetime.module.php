@@ -165,10 +165,13 @@ class RockDatetime extends WireData implements Module {
 
     /**
      * Return merged options (defaults, config, custom)
+     * @param array $options
      * @return object
      */
     public function getOptions($options = []) {
-      if(!is_array($options)) throw new WireException("Parameter of getOptions must be an array");
+      if(!is_array($options)) {
+        throw new WireException("Parameter of getOptions must be an array or null");
+      }
       
       // if options have not been set yet we set them now
       if(!$this->options) {

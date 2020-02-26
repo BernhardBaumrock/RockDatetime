@@ -15,6 +15,17 @@ echo $time->firstOfMonth()->format($format); // Samstag, 01.02.2020 00:00 Uhr
 
 A RockDatetime object holds not only the timestamp but also information for displaying a formatted string of the time and does also have several handy methods that help you when finding the very first second of a month, comparing dates or transforming strings into timestamps.
 
+## Creating a new RockDatetime object
+
+```php
+$d = new RockDatetime(); // current timestamp
+
+$d = new RockDatetime("2020-01-01");
+
+$d = $modules->get('RockDatetime');
+$d->setTime("2020-01-01");
+```
+
 ## Defining options
 
 Working with dates and times you'll likely want to format them equally across your website most of the time. That's why RockDatetime takes options defined in `config.php` but leaving you the freedom of overriding them whenever necessary:
