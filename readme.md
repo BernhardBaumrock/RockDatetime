@@ -195,6 +195,10 @@ echo $d->firstOfMonth("+1 year"); // 2021-02-01 00:00:00
 echo $d->lastOfMonth("+1 year");  // 2021-02-29 23:59:59
 ```
 
+### Others
+
+There are several other handy helper functions like `sameDay()`, `sameYear()` etc.; See all available helper functions in RockDatetime.module.php!
+
 ## Time comparisons
 
 * equal, ==
@@ -242,7 +246,3 @@ d($d->inYear("2020")); // true
 ```
 
 The `inYear()` method is somewhat special as it transforms 4-letter input into a string like `"$year-01-01"` to make sure that PHP's `strtotime()` recognizes it correctly. See https://bit.ly/37XP7Wo for the issue.
-
-## Others
-
-There are several other handy helper functions like `sameDay()`, `sameYear()` etc.; See all available helper functions in RockDatetime.module.php!
