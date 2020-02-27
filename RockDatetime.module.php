@@ -319,8 +319,32 @@ class RockDatetime extends WireData implements Module {
      * Is the current instance equal to given datetime?
      * @return bool
      */
-    public function equal($date) {
+    public function equals($date) {
       return $this == new RockDatetime($date);
+    }
+
+    /**
+     * Is this datetime on the same Day as another?
+     * @return bool
+     */
+    public function sameDay($date) {
+      return $this->phpDate("Y-m-d") == $date->phpDate("Y-m-d");
+    }
+
+    /**
+     * Is this datetime on the same Month as another?
+     * @return bool
+     */
+    public function sameMonth($date) {
+      return $this->phpDate("Y-m") == $date->phpDate("Y-m");
+    }
+
+    /**
+     * Is this datetime on the same Year as another?
+     * @return bool
+     */
+    public function sameYear($date) {
+      return $this->phpDate("Y") == $date->phpDate("Y");
     }
 
   /* DATERANGE CHECKS */
