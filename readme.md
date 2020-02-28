@@ -209,8 +209,8 @@ There are several other handy helper functions like `sameDay()`, `sameYear()` et
 $d1 = new RockDatetime("2020-01-01");
 $d2 = new RockDatetime("2010-01-01");
 
-d($d1->equal("2020-01-01")); // true
-d($d1->equal("2020-01-01 12:00")); // false
+d($d1->equals("2020-01-01")); // true
+d($d1->equals("2020-01-01 12:00")); // false
 d($d1 == $d2); // false
 
 d($d1->before("2020-02-02")); // true
