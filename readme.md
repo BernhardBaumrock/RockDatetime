@@ -151,10 +151,10 @@ echo $pages->find($selector); // 1033|1034|1035
 **Locale-aware formatting of the object**
 
 ```php
-$d = new RockDatetime();
-echo $d->format(); // 25.02.2020 14:31
-echo $d->format("%A, %d.%m.%y (%H:%M Uhr)"); // Dienstag, 25.02.20 (14:33 Uhr)
-echo $d->format(['time' => "%H|%M|%S"]); // 25.02.2020 14|40|45
+$d = new RockDatetime("25.02.2020 14:00");
+echo $d->format(); // 25.02.2020 14:00
+echo $d->format("%A, %d.%m.%y (%H:%M Uhr)"); // Dienstag, 25.02.20 (14:00 Uhr)
+echo $d->format(['time' => "%H|%M|%S"]); // 25.02.2020 14|30|00
 ```
 
 ## Helper functions
