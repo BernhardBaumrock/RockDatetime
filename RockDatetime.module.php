@@ -301,18 +301,26 @@ class RockDatetime extends WireData implements Module {
 
     /**
      * Is the current instance after a given datetime?
+     * 
+     * Date can be anything that can be parsed by RockDatetime, so you can
+     * simply check against timestamps, eg. $page->getUnformatted('modified')
+     * @param mixed $date
      * @return bool
      */
     public function after($date) {
-      return $this > new RockDatetime($date);
+      return $this > new RockDatetime((string)$date);
     }
 
     /**
      * Is the current instance before a given datetime?
+     * 
+     * Date can be anything that can be parsed by RockDatetime, so you can
+     * simply check against timestamps, eg. $page->getUnformatted('modified')
+     * @param mixed $date
      * @return bool
      */
     public function before($date) {
-      return $this < new RockDatetime($date);
+      return $this < new RockDatetime((string)$date);
     }
 
     /**
@@ -320,30 +328,45 @@ class RockDatetime extends WireData implements Module {
      * @return bool
      */
     public function equals($date) {
-      return $this == new RockDatetime($date);
+      return $this == new RockDatetime((string)$date);
     }
 
     /**
      * Is this datetime on the same Day as another?
+     * 
+     * Date can be anything that can be parsed by RockDatetime, so you can
+     * simply check against timestamps, eg. $page->getUnformatted('modified')
+     * @param mixed $date
      * @return bool
      */
     public function sameDay($date) {
+      $date = new RockDatetime((string)$date);
       return $this->phpDate("Y-m-d") == $date->phpDate("Y-m-d");
     }
 
     /**
      * Is this datetime on the same Month as another?
+     * 
+     * Date can be anything that can be parsed by RockDatetime, so you can
+     * simply check against timestamps, eg. $page->getUnformatted('modified')
+     * @param mixed $date
      * @return bool
      */
     public function sameMonth($date) {
+      $date = new RockDatetime((string)$date);
       return $this->phpDate("Y-m") == $date->phpDate("Y-m");
     }
 
     /**
      * Is this datetime on the same Year as another?
+     * 
+     * Date can be anything that can be parsed by RockDatetime, so you can
+     * simply check against timestamps, eg. $page->getUnformatted('modified')
+     * @param mixed $date
      * @return bool
      */
     public function sameYear($date) {
+      $date = new RockDatetime((string)$date);
       return $this->phpDate("Y") == $date->phpDate("Y");
     }
 
